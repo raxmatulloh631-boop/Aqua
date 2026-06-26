@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}Fakturalar – AquaBiz{% endblock %}
+{% block page_title %}🧾 Fakturalar{% endblock %}
+
+{% block content %}
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+  <div class="stat-card" style="flex:1;min-width:200px;margin:0">
+    <div class="stat-icon cyan"><i class="fa-solid fa-coins"></i></div>
+    <div>
+      <div class="stat-value" style="font-size:20px">{{ total|floatformat:0 }} so'm</div>
+      <div class="stat-label">Jami tushum</div>
+    </div>
+  </div>
+  <a href="{% url 'invoice_create' %}" class="btn btn-primary">
+    <i class="fa-solid fa-plus"></i> Yangi Sotuv
+  </a>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">Barcha Fakturalar ({{ invoices|length }})</span>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Mijoz</th>
+          <th>Mahsulotlar</th>
+          <th>Summa</th>
+          <th>Sana</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for inv in invoices %}
+        <tr>
+          <td><span class="badge badge-blue">#{{ inv.pk }}</span></td>
+          <td><strong>{{ inv.customer.name }}</strong></td>
+          <td style="font-size:13px;color:#475569">
+            {% for item in inv.items.all %}
+              <div>{{ item.product.name }} × {{ item.quantity }} = {{ item.item_total_price|floatformat:0 }} so'm</div>
+            {% endfor %}
+          </td>
+          <td style="font-weight:700;color:#0ea5e9;font-size:15px">{{ inv.total_price|floatformat:0 }} so'm</td>
+          <td style="color:#64748b;font-size:13px;white-space:nowrap">{{ inv.created_at|date:"d.m.Y H:i" }}</td>
+          <td>
+            {% if request.user.is_superuser %}
+              <a href="{% url 'invoice_delete' inv.pk %}" class="btn btn-sm" style="background:#fee2e2;color:#ef4444">
+                <i class="fa-solid fa-trash"></i>
+              </a>
+            {% else %}
+              <span style="color: #cbd5e1">-</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" style="text-align:center;color:#94a3b8;padding:48px">
+          <i class="fa-solid fa-file-invoice" style="font-size:36px;display:block;margin-bottom:10px;opacity:.4"></i>
+          Hali sotuv yo'q. <a href="{% url 'invoice_create' %}" style="color:#0ea5e9">Birinchi sotuvni kiriting →</a>
+        </td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

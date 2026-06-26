@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}Mahsulotlar – AquaBiz{% endblock %}
+{% block page_title %}📦 Mahsulotlar Ombori{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header" style="display:flex; justify-content:space-between; align-items:center">
+    <span class="card-title">Barcha mahsulotlar</span>
+    <a href="{% url 'product_create' %}" class="btn btn-primary btn-sm">
+      <i class="fa-solid fa-plus"></i> Yangi mahsulot
+    </a>
+  </div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th style="width:70px">Rasm</th>
+        <th>Mahsulot nomi</th>
+        <th>Narxi</th>
+        <th>Omborda (dona)</th>
+        <th style="width:180px; text-align:right">Amallar</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for product in products %}
+      <tr>
+        <td>
+          {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 45px; height: 45px; object-fit: cover; border-radius: 6px; border: 1px solid #eee;">
+          {% else %}
+            <div style="width: 45px; height: 45px; background: #f5f5f5; border-radius: 6px; display:flex; align-items:center; justify-content:center; color:#ccc;">
+              <i class="fa-regular fa-image" style="font-size: 18px;"></i>
+            </div>
+          {% endif %}
+        </td>
+        <td><strong>{{ product.name }}</strong></td>
+        <td>{{ product.price }} so'm</td>
+        <td>
+          {% if product.stock > 0 %}
+            <span class="badge text-success">{{ product.stock }} dona</span>
+          {% else %}
+            <span class="badge text-danger">Tugagan</span>
+          {% endif %}
+        </td>
+        <td style="text-align:right">
+          <div style="display:inline-flex; gap:5px">
+            <a href="{% url 'product_edit' product.pk %}" class="btn btn-sm btn-warning">
+              <i class="fa-solid fa-pen"></i>
+            </a>
+            <a href="{% url 'product_delete' product.pk %}" class="btn btn-sm btn-danger">
+              <i class="fa-solid fa-trash"></i>
+            </a>
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5" style="text-align:center; padding: 30px 0; color: #888;">
+          <i class="fa-solid fa-box-open" style="font-size: 32px; display:block; margin-bottom:10px;"></i>
+          Hozircha mahsulotlar qo'shilmagan.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

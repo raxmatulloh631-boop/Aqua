@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Tizimga kirish va Ro'yxatdan o'tish</title>
+    <style>
+        .auth-container { width: 400px; margin: 50px auto; border: 1px solid #ccc; padding: 20px; border-radius: 8px; }
+        .tab-buttons { display: flex; justify-content: space-around; margin-bottom: 20px; }
+        .tab-buttons button { padding: 10px 20px; cursor: pointer; }
+        .form-section { display: none; }
+        .active { display: block; }
+    </style>
+</head>
+<body>
+
+<div class="auth-container">
+    <!-- O'tish tugmalari -->
+    <div class="tab-buttons">
+        <button onclick="switchForm('login-sec')">Kirish</button>
+        <button onclick="switchForm('signup-sec')">Ro'yxatdan o'tish</button>
+    </div>
+
+    <!-- Xabarlar uchun (Success/Error) -->
+    {% if messages %}
+        {% for message in messages %}
+            <p style="color: red;">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Login Bo'limi -->
+    <div id="login-sec" class="form-section active">
+        <h2>Tizimga kirish</h2>
+        <form method="POST">
+            {% csrf_token %}
+            {{ login_form.as_p }}
+            <button type="submit" name="login_submit">Kirish</button>
+        </form>
+    </div>
+
+    <!-- Ro'yxatdan o'tish Bo'limi -->
+    <div id="signup-sec" class="form-section">
+        <h2>Yangi akkount yaratish</h2>
+        <form method="POST">
+            {% csrf_token %}
+            {{ signup_form.as_p }}
+            <button type="submit" name="signup_submit">Ro'yxatdan o'tish</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function switchForm(sectionId) {
+        // Hamma bo'limlarni yashirish
+        document.querySelectorAll('.form-section').forEach(div => div.classList.remove('active'));
+        // Tanlanganini ko'rsatish
+        document.getElementById(sectionId).classList.add('active');
+    }
+</script>
+
+</body>
+</html>

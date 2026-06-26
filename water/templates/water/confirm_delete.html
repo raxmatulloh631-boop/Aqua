@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}O'chirish – AquaBiz{% endblock %}
+{% block page_title %}🗑️ O'chirishni Tasdiqlash{% endblock %}
+
+{% block content %}
+<div style="max-width:480px">
+  <div class="card">
+    <div class="card-body" style="text-align:center;padding:48px 36px">
+      <div style="width:72px;height:72px;border-radius:50%;background:#fee2e2;color:#ef4444;display:inline-flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:20px">
+        <i class="fa-solid fa-trash"></i>
+      </div>
+      <h2 style="font-size:20px;font-weight:700;color:#0f172a;margin-bottom:10px">
+        {{ type|capfirst }}ni o'chirmoqchimisiz?
+      </h2>
+      <p style="color:#64748b;font-size:15px;margin-bottom:28px">
+        <strong style="color:#0f172a">{{ object }}</strong> — bu amalni bekor qilib bo'lmaydi!
+      </p>
+      <form method="post" style="display:flex;gap:12px;justify-content:center">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">
+          <i class="fa-solid fa-trash"></i> Ha, o'chir
+        </button>
+        <a href="javascript:history.back()" class="btn btn-outline">
+          Bekor qilish
+        </a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

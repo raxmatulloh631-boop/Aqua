@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% block title %}Yangi Faktura – AquaBiz{% endblock %}
+{% block page_title %}🧾 Yangi Faktura Yaratish{% endblock %}
+
+{% block content %}
+<div style="max-width:760px">
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Faktura ma'lumotlari</span>
+    </div>
+    <div class="card-body">
+      <form method="post" id="invoice-form">
+        {% csrf_token %}
+
+        <div class="form-group">
+          <label class="form-label">Mijozni tanlang *</label>
+          <select name="customer" class="form-control" required>
+            <option value="">--- Mijozni tanlang ---</option>
+            {% for customer in customers %}
+              <option value="{{ customer.id }}">{{ customer.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div style="margin-bottom:12px">
+          <label class="form-label">Mahsulotlar ro'yxati</label>
+        </div>
+
+        <div id="product-items">
+          <div class="product-row" style="display:grid;grid-template-columns:1fr 140px 36px;gap:10px;margin-bottom:10px;align-items:center;background:#f8fafc;padding:12px;border-radius:9px;border:1px solid #e2e8f0">
+            <select name="product[]" class="form-control" required>
+              <option value="">--- Mahsulotni tanlang ---</option>
+              {% for product in products %}
+                <option value="{{ product.id }}">{{ product.name }} (Qoldiq: {{ product.stock }})</option>
+              {% endfor %}
+            </select>
+            <input type="number" name="quantity[]" class="form-control" placeholder="Miqdori" min="1" value="1" required>
+            <button type="button" class="remove-product btn btn-sm" style="background:#fee2e2;color:#ef4444;padding:8px;justify-content:center">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="button" id="add-product-btn" class="btn btn-outline btn-sm" style="margin-bottom:24px">
+          <i class="fa-solid fa-plus"></i> Yana mahsulot qo'shish
+        </button>
+
+        <div style="display:flex;gap:10px;border-top:1px solid #e2e8f0;padding-top:20px">
+          <button type="submit" class="btn btn-primary">
+            <i class="fa-solid fa-check"></i> Fakturani Saqlash
+          </button>
+          <a href="{% url 'invoice_list' %}" class="btn btn-outline">Orqaga</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% block extra_js %}
+<script>
+// Mahsulot qatori HTML ni products ma'lumoti bilan qurish
+var productsData = [
+  {% for product in products %}
+    { id: "{{ product.id }}", name: "{{ product.name }}", stock: {{ product.stock }} }{% if not forloop.last %},{% endif %}
+  {% endfor %}
+];
+
+function buildSelect() {
+  var opts = '<option value="">--- Mahsulotni tanlang ---</option>';
+  productsData.forEach(function(p) {
+    opts += '<option value="' + p.id + '">' + p.name + ' (Qoldiq: ' + p.stock + ')</option>';
+  });
+  return opts;
+}
+
+document.getElementById('add-product-btn').addEventListener('click', function() {
+  var container = document.getElementById('product-items');
+  var row = document.createElement('div');
+  row.className = 'product-row';
+  row.style.cssText = 'display:grid;grid-template-columns:1fr 140px 36px;gap:10px;margin-bottom:10px;align-items:center;background:#f8fafc;padding:12px;border-radius:9px;border:1px solid #e2e8f0';
+  row.innerHTML =
+    '<select name="product[]" class="form-control" required>' + buildSelect() + '</select>' +
+    '<input type="number" name="quantity[]" class="form-control" placeholder="Miqdori" min="1" value="1" required>' +
+    '<button type="button" class="remove-product btn btn-sm" style="background:#fee2e2;color:#ef4444;padding:8px;justify-content:center"><i class="fa-solid fa-xmark"></i></button>';
+  container.appendChild(row);
+});
+
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest('.remove-product');
+  if (btn) {
+    var rows = document.querySelectorAll('.product-row');
+    if (rows.length > 1) {
+      btn.closest('.product-row').remove();
+    }
+  }
+});
+</script>
+{% endblock %}
+{% endblock %}

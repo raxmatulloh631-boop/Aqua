@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard – AquaBiz{% endblock %}
+{% block page_title %}📊 Bosh Sahifa{% endblock %}
+
+{% block content %}
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon blue"><i class="fa-solid fa-droplet"></i></div>
+    <div>
+      <div class="stat-value">{{ stats.products }}</div>
+      <div class="stat-label">Mahsulot turlari</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon green"><i class="fa-solid fa-users"></i></div>
+    <div>
+      <div class="stat-value">{{ stats.customers }}</div>
+      <div class="stat-label">Jami mijozlar</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon cyan"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+    <div>
+      <div class="stat-value">{{ stats.invoices_today }}</div>
+      <div class="stat-label">Bugungi fakturalar</div>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-icon amber"><i class="fa-solid fa-sack-dollar"></i></div>
+    <div>
+      <div class="stat-value" style="font-size:18px">{{ stats.revenue_month|floatformat:0 }} so'm</div>
+      <div class="stat-label">Bu oylik daromad</div>
+    </div>
+  </div>
+  {% if stats.low_stock > 0 %}
+  <div class="stat-card">
+    <div class="stat-icon red"><i class="fa-solid fa-triangle-exclamation"></i></div>
+    <div>
+      <div class="stat-value">{{ stats.low_stock }}</div>
+      <div class="stat-label">Kam qolgan mahsulot</div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <span class="card-title"><i class="fa-solid fa-clock-rotate-left" style="color:#0ea5e9;margin-right:8px"></i>Oxirgi Sotuvlar</span>
+    <a href="{% url 'invoice_list' %}" class="btn btn-outline btn-sm">Barchasi →</a>
+  </div>
+  <div class="card-body" style="padding:0">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Mijoz</th>
+            <th>Mahsulotlar</th>
+            <th>Summa</th>
+            <th>Sana</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for inv in recent_invoices %}
+          <tr>
+            <td><span class="badge badge-blue">#{{ inv.pk }}</span></td>
+            <td><strong>{{ inv.customer.name }}</strong></td>
+            <td style="color:#64748b;font-size:13px">
+              {% for item in inv.items.all %}
+                {{ item.product.name }} × {{ item.quantity }}{% if not forloop.last %}, {% endif %}
+              {% endfor %}
+            </td>
+            <td style="font-weight:700;color:#0ea5e9">{{ inv.total_price|floatformat:0 }} so'm</td>
+            <td style="color:#64748b;font-size:13px">{{ inv.created_at|date:"d.m.Y H:i" }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:40px">
+            <i class="fa-solid fa-inbox" style="font-size:32px;display:block;margin-bottom:8px"></i>
+            Hali sotuv yo'q. <a href="{% url 'invoice_create' %}" style="color:#0ea5e9">Birinchi sotuvni kiriting →</a>
+          </td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px">
+  <a href="{% url 'product_create' %}" class="card" style="padding:20px;text-decoration:none;color:inherit;display:flex;align-items:center;gap:16px;transition:transform .2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+    <div style="width:48px;height:48px;border-radius:12px;background:#e0f2fe;color:#0ea5e9;display:flex;align-items:center;justify-content:center;font-size:22px">
+      <i class="fa-solid fa-plus-circle"></i>
+    </div>
+    <div>
+      <div style="font-weight:700;color:#0f172a">Mahsulot qo'shish</div>
+      <div style="font-size:13px;color:#64748b">Yangi suv mahsuloti</div>
+    </div>
+  </a>
+  <a href="{% url 'invoice_create' %}" class="card" style="padding:20px;text-decoration:none;color:inherit;display:flex;align-items:center;gap:16px;transition:transform .2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+    <div style="width:48px;height:48px;border-radius:12px;background:#d1fae5;color:#10b981;display:flex;align-items:center;justify-content:center;font-size:22px">
+      <i class="fa-solid fa-cart-plus"></i>
+    </div>
+    <div>
+      <div style="font-weight:700;color:#0f172a">Sotuv qilish</div>
+      <div style="font-size:13px;color:#64748b">Yangi faktura yaratish</div>
+    </div>
+  </a>
+</div>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Mijozlar – AquaBiz{% endblock %}
+{% block page_title %}👥 Mijozlar{% endblock %}
+
+{% block content %}
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">Barcha Mijozlar ({{ customers|length }})</span>
+    <a href="{% url 'customer_create' %}" class="btn btn-primary btn-sm">
+      <i class="fa-solid fa-user-plus"></i> Qo'shish
+    </a>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Mijoz / Kompaniya</th>
+          <th>Telefon</th>
+          <th>Manzil</th>
+          <th>Fakturalar</th>
+          <th>Amallar</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for c in customers %}
+        <tr>
+          <td style="color:#94a3b8">{{ forloop.counter }}</td>
+          <td>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#06b6d4);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px">
+                {{ c.name|first|upper }}
+              </div>
+              <strong>{{ c.name }}</strong>
+            </div>
+          </td>
+          <td><a href="tel:{{ c.phone }}" style="color:#0ea5e9;text-decoration:none">📞 {{ c.phone }}</a></td>
+          <td style="color:#64748b;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.address }}</td>
+          <td><span class="badge badge-blue">{{ c.invoice_count }} ta</span></td>
+          <td>
+            <div style="display:flex;gap:6px">
+              <a href="{% url 'customer_edit' c.pk %}" class="btn btn-outline btn-sm">
+                <i class="fa-solid fa-pen"></i>
+              </a>
+              <a href="{% url 'customer_delete' c.pk %}" class="btn btn-sm" style="background:#fee2e2;color:#ef4444">
+                <i class="fa-solid fa-trash"></i>
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" style="text-align:center;color:#94a3b8;padding:48px">
+          <i class="fa-solid fa-users" style="font-size:36px;display:block;margin-bottom:10px;opacity:.4"></i>
+          Mijoz topilmadi. <a href="{% url 'customer_create' %}" style="color:#0ea5e9">Birinchi mijozni qo'shing →</a>
+        </td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
