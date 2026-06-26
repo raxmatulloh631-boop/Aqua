@@ -158,6 +158,12 @@
       .stats-grid { grid-template-columns: 1fr 1fr; }
     }
   </style>
+  <link rel="manifest" href="/static/manifest.json">
+  <meta name="theme-color" content="#0ea5e9">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="AquaBiz">
+  <link rel="apple-touch-icon" href="/static/icon-192.png">
   {% block extra_css %}{% endblock %}
 </head>
 <body>
@@ -233,6 +239,7 @@
 </div>
 
 <script>
+  // Mobile sidebar toggle
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') document.getElementById('sidebar')?.classList.remove('open');
   });
